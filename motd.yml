@@ -1,0 +1,9 @@
+---
+- hosts: all
+  tasks:
+  - name: Update the colored motd file to target hosts
+    copy:
+      src: /etc/motd
+      dest: /etc/motd
+      
+...
