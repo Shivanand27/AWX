@@ -1,0 +1,29 @@
+##This playbook will perform user related operations on target Machine#
+#Author - Shivanand Ranjan Dated: 21-05-2018                          #
+#######################################################################
+---
+- hosts: all
+  become_user: root
+
+  tasks:
+
+  - name: Adding groups to the target Machines..
+    group:
+     name={{ item }}
+     state=absent
+    with_items:
+      - Group1
+      - Group2
+      - Group2
+    tags: add_new_groups
+  - name: Adding users to the target machines
+    user:
+     name={{ item }}
+     state=absent
+     groups=Group1
+    with_items:
+      - user1
+      - user2
+      - user3
+    tags: add_new_users
+...

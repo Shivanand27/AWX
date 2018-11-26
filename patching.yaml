@@ -1,0 +1,34 @@
+---
+# Demo ansible playbook to perform OS pathing on RHEL/CentOS Systems
+- hosts: dev
+  become_user: root
+  serial: 2
+
+# Tasks Start here
+  tasks:
+  
+  #Purpose of this task is to check whether applications are stopped before Patching
+  - name: Verify Application/Database processes are not running
+    shell: if ps -eaf|grep -i http|grep -v grep >/dev/null ;then echo 'process_running'; else 'process_not_running'; fi
+    ignore_errors: true
+    register: app_process_check
+  #This task is decision,play will fail/quit,If application is running
+ # - name: Decision point to start patching
+ #   fail: msg="Have running applications,Please stop the applications first"
+ #   when: app_process_check.stdout == "process_running"
+  #This task will upgrade/install the RPM's if application is stopped
+  - name: Upgrading packages on the server
+    yum:
+     name="kernel"
+     state=latest
+ #   when: app_process_check.stdout == "process_not_running"
+    register: yum_update
+  #Restart the system after Patching
+  - name: Reboot the server
+    command: shutdown -r +1 "Rebooting server after patching"
+  #Wait for 3 min for system to comeup
+  - name: Pause for 180 Sec
+    pause: 
+      minutes: 3
+     
+...
